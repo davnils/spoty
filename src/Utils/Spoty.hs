@@ -15,13 +15,23 @@ versionURL = "v1/"
 
 -- perhaps merge consecutive queries in some clever way?
 
+build :: T.Text -> T.Text -> T.Text
+build e d = build2 e "" d
+
+build2 :: T.Text -> T.Text -> T.Text -> T.Text
+build2 endpoint dir arg = T.intercalate "/" [endpoint, arg, dir]
+
 -- | TBD.
 getAlbum :: SpotID -> IO Album
-getAlbum = fetch "albums"
+getAlbum = fetch . build "albums"
 
 -- | TBD.
 getArtist :: SpotID -> IO Artist
-getArtist = fetch "artists"
+getArtist = fetch . build "artists"
+
+-- | TBD.
+getArtistAlbums :: SpotID -> IO (Paging Album)
+getArtistAlbums = fetch . build2 "artists" "albums"
 
 {-
 -- | TBD.
@@ -31,14 +41,14 @@ search = undefined
 
 -- | TBD.
 getTrack :: SpotID -> IO Track
-getTrack = fetch "tracks"
+getTrack = fetch . build "tracks"
 
 -- | TBD.
 getUser :: T.Text -> IO User
-getUser = fetch "users"
+getUser = fetch . build "users"
 
 -- | TBD.
-fetch :: FromJSON a => String -> T.Text -> IO a
-fetch endpoint arg = do
-  reply <- W.get $ baseURL <> versionURL <> endpoint <> "/" <> T.unpack arg
+fetch :: FromJSON a => T.Text -> IO a
+fetch endpoint = do
+  reply <- W.get $ baseURL <> versionURL <> T.unpack endpoint
   fmap (^. W.responseBody) (W.asJSON reply)
