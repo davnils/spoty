@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell #-}
+{-# LANGUAGE FlexibleInstances, FunctionalDependencies, MultiParamTypeClasses, OverloadedStrings, TemplateHaskell #-}
 
 module Utils.Spoty.Types where
 
@@ -13,11 +13,18 @@ type URL = T.Text
 type SpotID = T.Text
 type SpotURI = T.Text
 
-require str obj = case HM.member str obj of
-                    False -> return Nothing
-                    True -> fmap Just (parseJSON $ Object obj)
+-- | TBD.
+require str obj =
+  case HM.member str obj of
+    False -> return Nothing
+    True -> fmap Just (parseJSON $ Object obj)
 
--- TODO: ExternalID and ExternalURL may need to accept an array
+-- | TBD.
+parseStrMap :: MonadPlus m => HM.HashMap k Value -> (k -> T.Text -> a) -> m [a]
+parseStrMap vals cons = sequence . flip map (HM.toList vals) $ \e -> 
+  case e of 
+    (key, String val) -> return $ cons key val
+    _                 -> mzero
 
 data ExternalID
   = ExternalID
@@ -27,12 +34,10 @@ data ExternalID
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''ExternalID
+makeFields ''ExternalID
 
-instance FromJSON ExternalID where
-  parseJSON (Object v) = case (HM.toList v) of
-                           [(key, String val)] -> return $ ExternalID key val
-                           _            -> mzero
+instance FromJSON [ExternalID] where
+  parseJSON (Object v) = parseStrMap v ExternalID
   parseJSON _          = mzero
 
 data ExternalURL
@@ -43,12 +48,10 @@ data ExternalURL
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''ExternalURL
+makeFields ''ExternalURL
 
-instance FromJSON ExternalURL where
-  parseJSON (Object v) = case (HM.toList v) of
-                           [(key, String val)] -> return $ ExternalURL key val
-                           _            -> mzero
+instance FromJSON [ExternalURL] where
+  parseJSON (Object v) = parseStrMap v ExternalURL
   parseJSON _          = mzero
 
 data Image
@@ -60,7 +63,7 @@ data Image
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''Image
+makeFields ''Image
 
 instance FromJSON Image where
   parseJSON (Object v) = Image <$>
@@ -83,7 +86,7 @@ data Paging a
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''Paging
+makeFields ''Paging
 
 instance FromJSON a => FromJSON (Paging a) where
   parseJSON (Object v) = Paging <$>
@@ -100,14 +103,14 @@ instance FromJSON a => FromJSON (Paging a) where
 data User
   = User
   {
-    _userExternalUrls :: ExternalURL,
+    _userExternalUrls :: [ExternalURL],
     _userHref :: URL,
     _userID :: SpotID,
     _userURI :: SpotURI
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''User
+makeFields ''User
 
 instance FromJSON User where
   parseJSON (Object v) = User <$>
@@ -127,7 +130,7 @@ data ArtistDetails
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''ArtistDetails
+makeFields ''ArtistDetails
 
 instance FromJSON ArtistDetails where
   parseJSON (Object v) = ArtistDetails <$>
@@ -140,7 +143,7 @@ instance FromJSON ArtistDetails where
 data Artist
   = Artist
   {
-    _artistExternalUrls :: ExternalURL,
+    _artistExternalUrls :: [ExternalURL],
     _artistHref :: URL,
     _artistID :: SpotID,
     _artistName :: T.Text,
@@ -149,7 +152,7 @@ data Artist
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''Artist
+makeFields ''Artist
 
 instance FromJSON Artist where
   parseJSON (Object v) = Artist <$>
@@ -166,12 +169,12 @@ data TrackDetails
   = TrackDetails
   {
     _trackAvailableMarkets :: [T.Text],
-    _trackExternalIDs :: ExternalID,
+    _trackExternalIDs :: [ExternalID],
     _trackPopularity :: Int
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''TrackDetails
+makeFields ''TrackDetails
 
 instance FromJSON TrackDetails where
   parseJSON (Object v) = TrackDetails <$>
@@ -188,7 +191,7 @@ data Track
     _trackDiscNumber :: Int,
     _trackDurationMs :: Int,
     _trackExplicit :: Bool,
-    _trackExternalUrls :: ExternalURL,
+    _trackExternalUrls :: [ExternalURL],
     _trackHref :: URL,
     _trackID :: SpotID,
     _trackName :: T.Text,
@@ -199,7 +202,7 @@ data Track
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''Track
+makeFields ''Track
 
 instance FromJSON Track where
   parseJSON (Object v) = Track <$>
@@ -222,8 +225,7 @@ data AlbumDetails
   = AlbumDetails
   {
     _albumArtists :: [Artist],
-    _albumAvailableMarkets :: [T.Text],
-    _albumExternalIDs :: ExternalID,
+    _albumExternalIDs :: [ExternalID],
     _albumGenres :: [T.Text],
     _albumPopularity :: Int,
     _albumReleaseDate :: T.Text,
@@ -232,12 +234,11 @@ data AlbumDetails
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''AlbumDetails
+makeFields ''AlbumDetails
 
 instance FromJSON AlbumDetails where
   parseJSON (Object v) = AlbumDetails <$>
                          v .: "artists" <*>
-                         v .: "available_markets" <*>
                          v .: "external_ids" <*>
                          v .: "genres" <*>
                          v .: "popularity" <*>
@@ -251,7 +252,8 @@ data Album
   = Album
   {
     _albumType :: T.Text,
-    _albumExternalURLs :: ExternalURL,
+    _albumAvailableMarkets :: [T.Text],
+    _albumExternalURLs :: [ExternalURL],
     _albumHref :: T.Text,
     _albumID :: SpotID,
     _albumImages :: [Image],
@@ -261,11 +263,12 @@ data Album
   }
   deriving (Eq, Ord, Show)
 
-makeLenses ''Album
+makeFields ''Album
 
 instance FromJSON Album where
   parseJSON (Object v) = Album <$>
                          v .: "album_type" <*>
+                         v .: "available_markets" <*>
                          v .: "external_urls" <*>
                          v .: "href" <*>
                          v .: "id" <*>
