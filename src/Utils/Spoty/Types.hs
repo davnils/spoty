@@ -2,28 +2,32 @@
 
 module Utils.Spoty.Types where
 
-import           Control.Applicative
-import           Control.Lens
-import           Control.Monad
+import           Control.Applicative ((<$>), (<*>))
+import           Control.Lens (makeFields)
+import           Control.Monad (MonadPlus(..), mzero)
 import           Data.Aeson
+import           Data.Aeson.Types (Parser)
 import qualified Data.HashMap.Strict as HM
 import qualified Data.Text as T
 
 type URL = T.Text
+
 type SpotID = T.Text
+
 type SpotURI = T.Text
 
 -- | TBD.
+require :: FromJSON a => T.Text -> HM.HashMap T.Text Value -> Parser (Maybe a)
 require str obj =
-  case HM.member str obj of
-    False -> return Nothing
-    True -> fmap Just (parseJSON $ Object obj)
+  if HM.member str obj
+    then fmap Just (parseJSON $ Object obj)
+    else return Nothing
 
 -- | TBD.
 parseStrMap :: MonadPlus m => HM.HashMap k Value -> (k -> T.Text -> a) -> m [a]
-parseStrMap vals cons = sequence . flip map (HM.toList vals) $ \e -> 
+parseStrMap vals constr = sequence . flip map (HM.toList vals) $ \e ->
   case e of 
-    (key, String val) -> return $ cons key val
+    (key, String val) -> return $ constr key val
     _                 -> mzero
 
 data ExternalID
