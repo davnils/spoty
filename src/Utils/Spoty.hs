@@ -70,9 +70,6 @@ makeProducer pred opts url = go 0
     let f = fromMaybe (fmap (^. W.responseBody) . W.asJSON) pred
     (chunk :: Paging b) <- liftIO $ f reply
 
-    -- TODO: REMOVE
-    -- liftIO . putStrLn $ "(offset, total)=" <> show (offset, chunk ^. total)
-
     mapM_ P.yield $ chunk ^. items
 
     let delta = length $ chunk ^. items
