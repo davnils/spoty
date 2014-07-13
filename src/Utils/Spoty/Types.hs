@@ -58,7 +58,7 @@ data Image
   = Image
   {
     _imageHeight :: Maybe Int,
-    _imageURL :: URL,
+    _imagePath :: URL,
     _imageWidth :: Maybe Int
   }
   deriving (Eq, Ord, Show)
@@ -105,8 +105,8 @@ data User
   {
     _userExternalUrls :: [ExternalURL],
     _userHref :: URL,
-    _userID :: SpotID,
-    _userURI :: SpotURI
+    _userSpotifyID :: SpotID,
+    _userSpotifyURI :: SpotURI
   }
   deriving (Eq, Ord, Show)
 
@@ -145,9 +145,9 @@ data Artist
   {
     _artistExternalUrls :: [ExternalURL],
     _artistHref :: URL,
-    _artistID :: SpotID,
+    _artistSpotifyID :: SpotID,
     _artistName :: T.Text,
-    _artistURI :: SpotURI,
+    _artistSpotifyURI :: SpotURI,
     _artistDetails :: Maybe ArtistDetails
   }
   deriving (Eq, Ord, Show)
@@ -193,11 +193,11 @@ data Track
     _trackExplicit :: Bool,
     _trackExternalUrls :: [ExternalURL],
     _trackHref :: URL,
-    _trackID :: SpotID,
+    _trackSpotifyID :: SpotID,
     _trackName :: T.Text,
     _trackPreviewURL :: URL,
     _trackNumber :: Int,
-    _trackURI :: SpotURI,
+    _trackSpotifyURI :: SpotURI,
     _trackDetails :: Maybe TrackDetails
   }
   deriving (Eq, Ord, Show)
@@ -255,10 +255,10 @@ data Album
     _albumAvailableMarkets :: [T.Text],
     _albumExternalURLs :: [ExternalURL],
     _albumHref :: T.Text,
-    _albumID :: SpotID,
+    _albumSpotifyID :: SpotID,
     _albumImages :: [Image],
     _albumName :: T.Text,
-    _albumURI :: SpotURI,
+    _albumSpotifyURI :: SpotURI,
     _albumDetails :: Maybe AlbumDetails
   }
   deriving (Eq, Ord, Show)

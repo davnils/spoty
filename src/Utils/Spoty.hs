@@ -16,6 +16,7 @@ import           Data.Monoid ((<>))
 import qualified Data.Text as T
 import qualified Network.Wreq as W
 import qualified Pipes as P
+import qualified Pipes.Prelude as P
 import           Utils.Spoty.Types
 
 baseURL, versionURL :: String
@@ -69,7 +70,8 @@ makeProducer pred opts url = go 0
     let f = fromMaybe (fmap (^. W.responseBody) . W.asJSON) pred
     (chunk :: Paging b) <- liftIO $ f reply
 
-    liftIO . putStrLn $ "(offset, total)=" <> show (offset, chunk ^. total)
+    -- TODO: REMOVE
+    -- liftIO . putStrLn $ "(offset, total)=" <> show (offset, chunk ^. total)
 
     mapM_ P.yield $ chunk ^. items
 
@@ -119,6 +121,26 @@ search cats term = (extract SearchArtist, extract SearchAlbum, extract SearchTra
   pred tag reply = case extractInner reply (pluralize tag) of
     Just val -> return val
     Nothing  -> throw . W.JSONError $ "Unexpected search result, got: " <> show reply
+
+-- | TBD.
+searchArtist :: T.Text -> P.Producer Artist IO ()
+searchArtist = (^. _1) . search [SearchArtist]
+
+-- | TBD.
+searchAlbum :: T.Text -> P.Producer Album IO ()
+searchAlbum = (^. _2) . search [SearchAlbum]
+
+-- | TBD.
+searchTrack :: T.Text -> P.Producer Track IO ()
+searchTrack = (^. _3) . search [SearchTrack]
+
+-- | TBD.
+fetchOne :: Monad m => P.Producer a m () -> m (Maybe a)
+fetchOne = P.head
+
+-- | TBD.
+fetchAll :: Monad m => P.Producer a m () -> m [a]
+fetchAll = P.toListM
 
 -- | TBD.
 fetch :: FromJSON a => T.Text -> IO a
