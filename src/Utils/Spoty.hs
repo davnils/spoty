@@ -1,4 +1,4 @@
-{-# LANGUAGE ConstraintKinds, NoMonomorphismRestriction, OverloadedStrings, ScopedTypeVariables #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, ScopedTypeVariables #-}
 
 module Utils.Spoty
 (
@@ -16,7 +16,6 @@ import           Control.Applicative ((<$>))
 import           Control.Exception (throw)
 import           Control.Lens
 import           Control.Monad (when)
-import           Control.Monad.Trans (liftIO)
 import           Data.Aeson
 import           Data.Aeson.Lens (key)
 import           Data.Aeson.Types (parseMaybe)
@@ -82,10 +81,10 @@ makeProducer predicate opts url = go 0
   where
   go off = do
     let opts' = opts & W.param "offset" .~ [T.pack $ show off]
-    reply <- liftIO $ grab opts' url
+    reply <- P.liftIO $ grab opts' url
 
     let f = fromMaybe (fmap (^. W.responseBody) . W.asJSON) predicate
-    (chunk :: Paging b) <- liftIO $ f reply
+    (chunk :: Paging b) <- P.liftIO $ f reply
 
     mapM_ P.yield $ chunk ^. items
 
