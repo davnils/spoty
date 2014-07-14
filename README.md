@@ -34,4 +34,6 @@ If you don't need constant-space streaming, then you can extract the correspondi
 When you're only interested in the first result (e.g. when searching for a well-known artist), it's useful to call `fetchOne ⩬ Monad m ⇒ P.Producer a m ∅ → m (Maybe a)`.
 In the other cases you will need functions available in the pipes package.
 
+The distinction between full and simple objects has been implemented as details wrapped in an optional Maybe.
+
 Finally, error handling is implemented with exceptions being thrown when HTTP or JSON decoding errors occur.

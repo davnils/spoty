@@ -29,19 +29,18 @@ import qualified Pipes as P
 import qualified Pipes.Prelude as P
 import           Utils.Spoty.Types
 
--- | TBD.
 baseURL, versionURL :: String
 baseURL    = "https://api.spotify.com/"
 versionURL = "v1/"
 
--- | TBD.
+-- | Country identifier.
 type CountryID = T.Text
 
--- | TBD.
+-- | Categories being used in a search.
 data SearchCategory
-  = SearchAlbum  -- ^ TBD.
-  | SearchArtist -- ^ TBD.
-  | SearchTrack  -- ^ TBD.
+  = SearchAlbum  -- ^ Search for albums.
+  | SearchArtist -- ^ Search for artists.
+  | SearchTrack  -- ^ Search for tracks.
   deriving (Eq, Ord)
 
 instance Show SearchCategory where
@@ -49,27 +48,27 @@ instance Show SearchCategory where
   show SearchArtist = "artist"
   show SearchTrack = "track"
 
--- | TBD.
-build :: T.Text -> T.Text -> T.Text
+-- | Construct a URL from an endpoint and an identifier.
+build :: T.Text -> SpotID -> T.Text
 build e = build2 e ""
 
--- | TBD.
-build2 :: T.Text -> T.Text -> T.Text -> T.Text
+-- | Construct a URL from endpoint / spotify id / subdir.
+build2 :: T.Text -> T.Text -> SpotID -> T.Text
 build2 endpoint dir arg = T.intercalate "/" [endpoint, arg, dir]
 
--- | TBD.
+-- | Retrieve an album.
 getAlbum :: SpotID -> IO Album
 getAlbum = fetch . build "albums"
 
--- | TBD.
+-- | Retrieve the tracks of an album.
 getAlbumTracks :: SpotID -> P.Producer Track IO ()
 getAlbumTracks = makeProducer Nothing W.defaults . build2 "albums" "tracks"
 
--- | TBD.
+-- | Retrieve an artist.
 getArtist :: SpotID -> IO Artist
 getArtist = fetch . build "artists"
 
--- | TBD.
+-- | Retrieve the albums of an artist.
 getArtistAlbums :: SpotID -> P.Producer Album IO ()
 getArtistAlbums = makeProducer Nothing W.defaults . build2 "artists" "albums"
 
@@ -100,28 +99,28 @@ extractInner raw tag = locate >>= parseMaybe parseJSON
   where
   locate = raw ^? W.responseBody . key tag
 
--- | TBD.
+-- | Retrieve the most popular tracks of an artist.
 getArtistTop :: SpotID -> CountryID -> IO [Track]
 getArtistTop artist country = do
   let opts = W.defaults & W.param "country" .~ [country]
   reply <- grab opts $ build2 "artists" "top-tracks" artist
   return . fromMaybe [] $ extractInner reply "tracks"
 
--- | TBD.
+-- | Retrieve a few related artists.
 getArtistRelated :: SpotID -> IO [Artist]
 getArtistRelated artist = do
   reply <- grab W.defaults $ build2 "artists" "related-artists" artist
   return . fromMaybe [] $ extractInner reply "artists"
 
--- | TBD.
+-- | Retrieve a track.
 getTrack :: SpotID -> IO Track
 getTrack = fetch . build "tracks"
 
--- | TBD.
+-- | Retrieve an user.
 getUser :: T.Text -> IO User
 getUser = fetch . build "users"
 
--- | TBD.
+-- | Search for some string in the given categories.
 search :: [SearchCategory] -> T.Text -> (P.Producer Artist IO (), P.Producer Album IO (), P.Producer Track IO ())
 search cats term = (extract SearchArtist, extract SearchAlbum, extract SearchTrack)
   where
@@ -136,36 +135,36 @@ search cats term = (extract SearchArtist, extract SearchAlbum, extract SearchTra
     Just val -> return val
     Nothing  -> throw . W.JSONError $ "Unexpected search result, got: " <> show reply
 
--- | TBD.
+-- | Search for artists.
 searchArtist :: T.Text -> P.Producer Artist IO ()
 searchArtist = (^. _1) . search [SearchArtist]
 
--- | TBD.
+-- | Search for albums.
 searchAlbum :: T.Text -> P.Producer Album IO ()
 searchAlbum = (^. _2) . search [SearchAlbum]
 
--- | TBD.
+-- | Search for tracks.
 searchTrack :: T.Text -> P.Producer Track IO ()
 searchTrack = (^. _3) . search [SearchTrack]
 
--- | TBD.
+-- | Fetch one element from the producer and discard the rest.
 fetchOne :: Monad m => P.Producer a m () -> m (Maybe a)
 fetchOne = P.head
 
--- | TBD.
+-- | Fetch all elements from the producer (NOTE: not constant space).
 fetchAll :: Monad m => P.Producer a m () -> m [a]
 fetchAll = P.toListM
 
--- | TBD.
+-- | Fetch a path and decode the corresponding object.
 fetch :: FromJSON a => T.Text -> IO a
 fetch = fetchWith W.defaults
 
--- | TBD.
+-- | Fetch a path with the given HTTP options and decode the corresponding object.
 fetchWith :: FromJSON a => W.Options -> T.Text -> IO a
-fetchWith opts endpoint =
-  (^. W.responseBody) <$> (grab opts endpoint >>= W.asJSON)
+fetchWith opts path' =
+  (^. W.responseBody) <$> (grab opts path' >>= W.asJSON)
 
--- | TBD.
+-- | Fetch a path with the given HTTP options and return the raw response.
 grab :: W.Options -> T.Text -> IO (W.Response BL.ByteString)
-grab opts endpoint =
-  W.getWith opts $ baseURL <> versionURL <> T.unpack endpoint
+grab opts path' =
+  W.getWith opts $ baseURL <> versionURL <> T.unpack path'

@@ -1,5 +1,12 @@
 {-# LANGUAGE FlexibleInstances, FunctionalDependencies, MultiParamTypeClasses, OverloadedStrings, TemplateHaskell #-}
 
+{-|
+   Object declarations and lenses. Should not be imported by user code.
+   Please view the official documentation.
+
+   Note that the distinction between full and simple objects is implemented as an optional Maybe field with details.
+-}
+
 module Utils.Spoty.Types where
 
 import           Control.Applicative ((<$>), (<*>))
@@ -16,14 +23,14 @@ type SpotID = T.Text
 
 type SpotURI = T.Text
 
--- | TBD.
+-- | Require that a field is present before parsing the corresponding value.
 require :: FromJSON a => T.Text -> HM.HashMap T.Text Value -> Parser (Maybe a)
 require str obj =
   if HM.member str obj
     then fmap Just (parseJSON $ Object obj)
     else return Nothing
 
--- | TBD.
+-- | Parse a map of key-value entries, wrapped in the given constructor.
 parseStrMap :: MonadPlus m => HM.HashMap k Value -> (k -> T.Text -> a) -> m [a]
 parseStrMap vals constr = sequence . flip map (HM.toList vals) $ \e ->
   case e of 
