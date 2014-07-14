@@ -1,7 +1,7 @@
 name:                spoty
 version:             0.1.0.0
 synopsis:            Spotify web API wrapper
-description:         TBD
+description:         Access to public endpoints in the spotify web API.
 license:             BSD3
 license-file:        LICENSE
 author:              David Nilsson
@@ -9,6 +9,9 @@ maintainer:          nilsson.dd+code@gmail.com
 category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
+homepage:            https://github.com/davnils/spoty
+bug-reports:         https://github.com/davnils/spoty/issues
+extra-source-files:  Examples/Search.hs Examples/Albums.hs
 
 library
   exposed-modules:     Utils.Spoty, Utils.Spoty.Types
@@ -25,3 +28,7 @@ library
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -O2 -Wall
+
+source-repository head
+  type: git
+  location: https://github.com/davnils/spoty.git
