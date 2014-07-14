@@ -2,6 +2,7 @@
 
 module Utils.Spoty
 (
+module Utils.Spoty.Types,
 getAlbum, getAlbumTracks,
 getArtist, getArtistAlbums, CountryID, getArtistTop, getArtistRelated,
 SearchCategory(..),
