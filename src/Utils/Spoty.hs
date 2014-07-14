@@ -33,7 +33,7 @@ baseURL, versionURL :: String
 baseURL    = "https://api.spotify.com/"
 versionURL = "v1/"
 
--- | Country identifier.
+-- | Country identifier e.g. \"SE\".
 type CountryID = T.Text
 
 -- | Categories being used in a search.

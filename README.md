@@ -1,4 +1,4 @@
-# Spotify web API in Haskell
+# Spotify web API in Haskell      [![Build Status](https://travis-ci.org/davnils/spoty.png)](https://travis-ci.org/davnils/spoty)
 
 [Web API](https://developer.spotify.com/web-api/) wrapper powered by lens and pipes, allowing easy access to public endpoints.
 It does not have any external dependencies nor requirements regarding app registration.
