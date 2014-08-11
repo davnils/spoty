@@ -33,7 +33,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 homepage:            https://github.com/davnils/spoty
 bug-reports:         https://github.com/davnils/spoty/issues
-extra-source-files:  Examples/Search.hs Examples/Albums.hs
+extra-source-files:  Examples/Search.hs Examples/Albums.hs CHANGELOG
 
 library
   exposed-modules:     Utils.Spoty, Utils.Spoty.Types

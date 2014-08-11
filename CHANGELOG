@@ -1,0 +1,11 @@
+Changes in 1.0.0.1
+------------------
+
+* New upper bound for base 4.7 (supports haskell platform 2014.2.0.0 and GHC 7.8.3)
+
+* New upper bound for aeson 0.8
+
+Changes in 1.0.0.0
+------------------
+
+* Initial release
