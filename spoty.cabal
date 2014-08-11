@@ -1,5 +1,5 @@
 name:                spoty
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Spotify web API wrapper
 description:         
   Web API <https://developer.spotify.com/web-api/> wrapper powered by lens and pipes, allowing easy access to public endpoints.
@@ -38,8 +38,8 @@ extra-source-files:  Examples/Search.hs Examples/Albums.hs
 library
   exposed-modules:     Utils.Spoty, Utils.Spoty.Types
   build-depends:
-                       aeson                 >= 0.7.0.6   && < 0.8,
-                       base                  >= 4.6       && < 4.7,
+                       aeson                 >= 0.7.0.6   && < 0.8.1,
+                       base                  >= 4.6       && < 4.8,
                        bytestring            >= 0.10      && < 0.11,
                        lens                  >= 4         && < 4.4,
                        pipes                 >= 4.1       && < 4.2,
