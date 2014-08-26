@@ -1,3 +1,8 @@
+Changes in 1.0.0.2
+------------------
+
+* Only support lens >=4.4 and wreq >=0.2 due to breaking changes
+
 Changes in 1.0.0.1
 ------------------
 
