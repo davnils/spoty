@@ -1,5 +1,5 @@
 name:                spoty
-version:             0.1.0.1
+version:             0.1.0.2
 synopsis:            Spotify web API wrapper
 description:         
   Web API <https://developer.spotify.com/web-api/> wrapper powered by lens and pipes, allowing easy access to public endpoints.
@@ -41,11 +41,12 @@ library
                        aeson                 >= 0.7.0.6   && < 0.8.1,
                        base                  >= 4.6       && < 4.8,
                        bytestring            >= 0.10      && < 0.11,
-                       lens                  >= 4         && < 4.4,
+                       lens                  >= 4.4       && < 4.5,
+                       lens-aeson            >= 1         && < 1.1,
                        pipes                 >= 4.1       && < 4.2,
                        text                  >= 0.11      && < 1.2,
                        unordered-containers  >= 0.2.3     && < 0.3,
-                       wreq                  >= 0.1       && < 0.2
+                       wreq                  >= 0.2       && < 0.3
 
   hs-source-dirs:      src
   default-language:    Haskell2010
