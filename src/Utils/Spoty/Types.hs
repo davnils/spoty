@@ -262,7 +262,7 @@ instance FromJSON AlbumDetails where
 data Album
   = Album
   {
-    _albumType :: T.Text,
+    _albumSort :: T.Text,
     _albumAvailableMarkets :: [T.Text],
     _albumExternalURLs :: [ExternalURL],
     _albumHref :: T.Text,
@@ -278,7 +278,7 @@ makeFields ''Album
 
 instance FromJSON Album where
   parseJSON (Object v) = Album <$>
-                         v .: "album_type" <*>
+                         v .: "album_sort" <*>
                          v .: "available_markets" <*>
                          v .: "external_urls" <*>
                          v .: "href" <*>
