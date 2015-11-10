@@ -38,15 +38,15 @@ extra-source-files:  Examples/Search.hs Examples/Albums.hs CHANGELOG
 library
   exposed-modules:     Utils.Spoty, Utils.Spoty.Types
   build-depends:
-                       aeson                 >= 0.7.0.6   && < 0.8.1,
-                       base                  >= 4.6       && < 4.8,
+                       aeson                 >= 0.7.0.6   && < 0.9.1,
+                       base                  >= 4.6       && < 4.9,
                        bytestring            >= 0.10      && < 0.11,
-                       lens                  >= 4.4       && < 4.5,
+                       lens                  >= 4.4       && < 4.14,
                        lens-aeson            >= 1         && < 1.1,
                        pipes                 >= 4.1       && < 4.2,
-                       text                  >= 0.11      && < 1.2,
+                       text                  >= 0.11      && < 1.3,
                        unordered-containers  >= 0.2.3     && < 0.3,
-                       wreq                  >= 0.2       && < 0.3
+                       wreq                  >= 0.2       && < 0.4.1
 
   hs-source-dirs:      src
   default-language:    Haskell2010
