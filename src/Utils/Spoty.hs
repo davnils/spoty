@@ -13,7 +13,6 @@ fetchOne, fetchAll
 )
 where
 
-import           Control.Applicative ((<$>))
 import           Control.Exception (throw)
 import           Control.Lens
 import           Control.Monad (when)

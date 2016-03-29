@@ -9,7 +9,6 @@
 
 module Utils.Spoty.Types where
 
-import           Control.Applicative ((<$>), (<*>))
 import           Control.Lens (makeFields)
 import           Control.Monad (MonadPlus(..), mzero)
 import           Data.Aeson
@@ -262,7 +261,7 @@ instance FromJSON AlbumDetails where
 data Album
   = Album
   {
-    _albumType :: T.Text,
+    _albumAlbumType :: T.Text,
     _albumAvailableMarkets :: [T.Text],
     _albumExternalURLs :: [ExternalURL],
     _albumHref :: T.Text,
