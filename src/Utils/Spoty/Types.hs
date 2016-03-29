@@ -9,7 +9,6 @@
 
 module Utils.Spoty.Types where
 
-import           Control.Applicative ((<$>), (<*>))
 import           Control.Lens (makeFields)
 import           Control.Monad (MonadPlus(..), mzero)
 import           Data.Aeson
