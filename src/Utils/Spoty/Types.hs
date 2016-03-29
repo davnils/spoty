@@ -262,7 +262,7 @@ instance FromJSON AlbumDetails where
 data Album
   = Album
   {
-    _albumType :: T.Text,
+    _albumAlbumType :: T.Text,
     _albumAvailableMarkets :: [T.Text],
     _albumExternalURLs :: [ExternalURL],
     _albumHref :: T.Text,
